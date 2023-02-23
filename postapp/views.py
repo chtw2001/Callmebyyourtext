@@ -14,8 +14,8 @@ class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     # authentication_classes = [BasicAuthentication, SessionAuthentication]
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -27,7 +27,10 @@ class QuestionViewSet(ModelViewSet):
         
         return QuestionSerializer
     def perform_create(self, serializer, **kwargs):
-        serializer.save(writer = self.request.user)
+        if self.request.user.id == None:
+            serializer.save(writer=self.request.user.id)
+        else:
+            serializer.save(writer = self.request.user)
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
